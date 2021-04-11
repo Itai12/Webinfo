@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />  
+    <link rel="stylesheet" href="solitaire_style.css" />
+	<link rel="shortcut icon" type="image/x-icon" href="image_plateau.jpg" />
+    <title> Mon projet </title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+	<h1>Jouer au Solitaire</h1>
+	<p>Bonjour et bienvenue sur notre jeu !</p>
+	
+ 
+	<div id="infosjeu"> 
+	 Temps : <span id='temps'>0</span> s 
+    </div> 
+  
+
+<div id="jeu">
+	<canvas id="myCanvas" width="700" height= "200" ></canvas>
+	<script>	
+		var canvas = document.getElementById("myCanvas");
+    	var context = canvas.getContext("2d");
+    
+    	document.getElementById('myCanvas').height = document.getElementById('myCanvas').width;
+    
+	
+	// Definition des variables
+    	var carreLong = canvas.width/7;
+		var Xballe = (carreLong/2);
+    	var Yballe = (carreLong/2);
+    	var RayonBalle =(carreLong)/2.5;
+	 
+	// Fonctions qui convertissent les pixels (position du curseur sur la page) en numéro de case sur le canevas (abscisse et ordonnée)
+		function RelativeX(x) { 
+			return Math.floor((x - canvas.offsetLeft)/canvas.width*7);
+		}       
+		function RelativeY(y) {
+			return Math.floor((y - canvas.offsetTop)/canvas.height*7);
+		}    
+		
+	// Fonctions qui convertissent le numéro de case du canevas en valeur de pixel
+ 		function pixelx(x) {
+			return (x/7*canvas.width);
+		}       
+		function pixely(y) {
+			return (y/7*canvas.height);
+		}
+		
+	// Définition de la fonction qui trace le carré élémentaire
+    	function drawCarre(x,y) { 
+			context.beginPath();
+    		context.rect(pixelx(x), pixely(y), carreLong, carreLong);
+    		context.fillStyle = "Teal";
+    		context.fill();
+    		context.closePath();   
+		}   
+
+    // Définition de la fonction qui trace la bille élémentaire
+		function drawBalle(couleur,x, y) { 
+    
+ 			radial = context.createRadialGradient(pixelx(x), pixely(y), RayonBalle,pixelx(x)-10,pixely(y)-10,8);			// Définit le dégradé (reflet sur la bille)
+			radial.addColorStop(0,couleur); //Orange
+			radial.addColorStop(1, '#FFF'); //Blanc
+
+			context.beginPath();																							// Trace la bille
+			context.fillStyle = radial;
+			context.arc(pixelx(x), pixely(y), RayonBalle,0,2*Math.PI);
+			context.fill();
+		}  
+		
+ 	// Définition de la fonction qui trace un cercle vert foncé (correspond au trou du plateau)
+ 		function drawvide(x, y) { 
+    		context.beginPath();
+			context.fillStyle = "#092e2e";
+			context.arc(pixelx(x+0.5), pixely(y+0.5), RayonBalle,0,2*Math.PI);
+			context.fill();
+			context.closePath();
+		}   
+    
+	// Définition de la fonction qui construit une brique élémentaire (bille orange + carré) 
+ 		function brique_elementaire(x,y) {
+ 	 		drawCarre(x,y);  
+    		drawBalle("#ff9700",x+1/2,y+1/2); 
+		}
+	
+	// Définition de la fonction qui copie la brique élémentaire sur tout le canevas
+		function segment() {
+			for (var j=0; j<7; j++) {
+				for (var i=0; i<7; i++ ) {
+					brique_elementaire(j, i);
+				}
+			}
+		}		
+		segment();
+		
+	// Tracé final du plateau : efface les coins du canevas pour tracer la croix
+		context.clearRect(pixelx(0), pixely(0), 2*carreLong, 2*carreLong);
+		context.clearRect(pixelx(5), pixely(0), 2*carreLong, 2*carreLong);
+		context.clearRect(pixelx(0), pixely(5), 2*carreLong, 2*carreLong);
+		context.clearRect(pixelx(5), pixely(5), 2*carreLong, 2*carreLong);
+		drawvide(3,3);		// Dessin du trou au milieu du plateau
+
+		
+																															// Ecoute de l'événement "click" et exécute la fonction clic
+		document.addEventListener("click", clic);
+
+																															// Définition des variables
+		var retour= [];	
+		var coup = 0;
+		
+																															// Définition de la fonction qui commande le mouvement des billes
+		function clic(e) {
+																															// Définition des variables relatives au clic
+			var x = event.layerX;																									//position du clic (abscisse, en pixels)
+			var y = event.layerY;																									//position du clic (ordonnée, en pixels)
+			var i=RelativeX(e.clientX);																								//position du clic (abscisse, convertie en case)
+			var j=RelativeY(e.clientY);																								//position du clic (ordonnée, convertie en case)
+																															// Récupère la couleur à l'endroit du clic
+			var pixel = context.getImageData(x, y, 1, 1);
+			var couleurrgb = pixel.data;
+			
+																															// Ajoute les infos du clic (position + couleur) à une liste
+			retour.push(i);
+			retour.push(j);
+			retour.push(couleurrgb[0]);
+	  
+																															// Conserve uniquement les infos des deux précedents clics
+			if (retour.length>6) {
+				for (var f = 0; f < 3; f++) {
+					retour.shift();
+				}
+			}
+	   
+			//alert(retour);
+			
+			//alert("couleur"+couleurrgb);
+			//alert(couleurrgb[0]);
+
+		
+			if (retour[0]==retour[3] && (retour[1]-retour[4])=='2' && retour[2]=='255' && retour[5]=='9') {					//Déplacement vertical haut			
+				var pixel = context.getImageData(x, pixely(retour[4]+1)+50, 1, 1);
+				var couleurrgb = pixel.data;
+				
+				if (couleurrgb[0]==255) {	
+					drawvide(retour[0],retour[1]);
+					drawvide(retour[0], retour[4]+1);
+					drawBalle("#ff9700", retour[3]+0.5, retour[4]+0.5);
+					coup++;
+				}
+
+			} else if (retour[0]==retour[3] && (retour[4]-retour[1])=='2' && retour[2]=='255' && retour[5]=='9') {			//Déplacement vertical bas		
+				var pixel = context.getImageData(x, pixely(retour[1]+1)+50, 1, 1);
+				var couleurrgb = pixel.data;
+				
+				if (couleurrgb[0]==255) {				
+					drawvide(retour[0],retour[1]);
+					drawvide(retour[0], retour[4]-1);
+					drawBalle("#ff9700", retour[0]+0.5, retour[4]+0.5);
+					coup++;
+				}
+		
+			} else if (retour[1]==retour[4] && (retour[3]-retour[0])=='2' && retour[2]=='255' && retour[5]=='9') {			//Déplacement horizontal droite
+				var pixel = context.getImageData(pixelx(retour[0]+1)+50, y, 1, 1);
+				var couleurrgb = pixel.data;
+				
+				if (couleurrgb[0]==255) {				
+					drawvide(retour[0],retour[1]);
+					drawvide(retour[0]+1, retour[4]);
+					drawBalle("#ff9700", retour[3]+0.5, retour[4]+0.5);
+					coup++;
+				}
+			} else if (retour[1]==retour[4] && (retour[0]-retour[3])=='2' && retour[2]=='255' && retour[5]=='9') {			//Déplacement horizontal gauche
+				var pixel = context.getImageData(pixelx(retour[3]+1)+50, y, 1, 1);
+				var couleurrgb = pixel.data;
+				
+				if (couleurrgb[0]==255) {				
+					drawvide(retour[0],retour[1]);
+					drawvide(retour[0]-1, retour[4]);
+					drawBalle("#ff9700", retour[3]+0.5, retour[4]+0.5);
+					coup++;
+				}					
+			}
+
+			if (coup=='31') {																								//Appel de la fonction bravo après 31 coups (une seule bille sur le plateau)
+				var dmc_setTimeout = setTimeout(bravo, 400);
+			}
+			return retour
+		}
+		
+																															// Définition de la fonction qui affiche un message de félicitations et propose de rejouer
+		function bravo() {
+			alert("**** FELICITATIONS !!! **** \n Vous avez réussi à résoudre notre jeu du solitaire !!! Vous avez mis "+ temps + " s.");
+			if (confirm('Voulez-vous rejouer ?')) {
+					location.reload();
+			}
+		}	
+	
+																															// Définition de la fonction qui chronomètre
+		var temps=parseInt($('#temps').text());  
+		function chrono() {
+			temps++;
+			$('#temps').html(temps);
+		};  
+		setInterval(chrono, 1000);
+   
+   
+	</script>
+</div>
+</body>
+</html>
+
+
+

@@ -1,0 +1,47 @@
+h1
+{
+    color:   orange; /* Les paragraphes seront en bleu */
+	
+	font-size: 3em;
+	/* font-weight: bold; */
+	width: 50%;
+	border: 5px double;
+	margin: auto;
+	text-align: center;
+	text-shadow: #D2311D 7px 5px 3px;
+}
+
+p
+{
+	font-size: 1.5em;
+	text-align: justify;
+	width: 50%;
+	margin: auto;
+}
+
+body /* On travaille sur la balise body, donc sur TOUTE la page */
+{
+   /* background-color: maroon; Le fond de la page sera noir */   
+    color: white; /* Le texte de la page sera blanc */
+
+    background-image: url("https://pixnio.com/free-images/2017/03/22/2017-03-22-11-13-22.jpg");
+}
+
+#jeu
+{
+	text-align: center;
+}
+
+#infosjeu
+{
+	font-size: 1.4em;
+	font-weight: bold;
+	width: 35%;
+	margin: auto;
+	text-align: right;
+}
+
+#temps
+{
+	color:   orange;
+}
