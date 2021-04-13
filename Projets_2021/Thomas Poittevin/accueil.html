@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Le jeu du serpent</title>
+		 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">  </script> 
+		<link rel=stylesheet id="style" type="text/css" href="style.css" />
+		<script type="text/javascript" src="snake.js"></script>
+	</head>
+	<link rel="icon" type="image/png" href="images/logo2.png" />
+	<body onload="chargement()">
+		
+		
+		<div class="page"
+			<header>
+				<h1>&#x1F3AE; Le jeu du serpent &#x1F3AE;</h1>
+			</header>
+		
+			<div class="flexheader">
+					<div class="flexheaderleft">
+						<img src="images/nv_lfa_1mini.png" alt="Le nouveau LFA" style="float:left"/>
+						<br>
+						Thomas Poittevin<br>
+						Lycée Franco-Allemand<br>
+						Option informatique 2021<br>
+					</div>
+					<div class="flexheaderscore">
+						<div id="score">000</div>
+					</div>		
+			</div>
+		
+			<div class="flexbody">
+				<section id="infos">
+					<h2 id="infos">&#128712;Informations</h2>
+					<h3>Dernière touche pressée</h3>
+					<div id="touche">--</div>
+					<h3>Statut</h3>
+					<div id="message">--</div>
+					<h3>Déplacements par seconde</h3>
+					<div id="FPS">--</div>
+					<h3>Longueur du serpent</h3>
+					<div id="longueur">--</div>
+					</info>
+				</section>
+				<section id="jeu">
+					<!-- canvas : zone de dessin -->
+					<canvas id="SnakeCanvas" width="800" height="500"></canvas>
+					<p></p>
+					<button onclick="depart()" class="bouton">Nouvelle partie</button>
+					<button onclick="pause()" class="boutonvert">Play/Pause</button>
+
+					
+				</section>
+				<section id="parametres">
+					<h2 id="parametres">&#x2699; Paramètres</h2>
+					<h3>Modes de jeu :</h3>
+					<ul>
+						<li>
+							<input type="range" id="nombre_obstacles"  min="0" max="50" value="0" >
+							<label for="nombre_obstacles">Nombre d'obstacles</label>
+						</li>
+						<li>
+							<input type="range" id="nombre_pommes" min="1" max="20" value="1">
+							<label for="nombre_pommes">Nombre de pommes</label>
+						</li>
+					</ul>
+					<h3>Difficulté :</h3>
+					<ul>	
+						<li>
+							<button onclick="onoff(this)" class="onoff"><div>OFF</div></button>
+							<label for="onoff">Superpommes</label>
+						</li>
+						<br>
+						<li>
+							<input type="range" id="moinsperiode_init"  min="-200" max="-50" value="-100" >
+							<label for="moinsperiode_init">Vitesse initiale du serpent</label>
+						</li>
+					
+					</ul>
+				</section>
+			</div>
+
+			<footer>
+				<p>- Version 2.3 au 6 avril 2021 -<br /></p>
+				<img src="images/drapeaux_mini.png" alt="Petit drapeau" />
+				<a href="mailto:tpoittevin@gmail.com">Signaler un problème</a>
+				<img src="images/drapeaux_mini.png" alt="Petit drapeau" />
+			</footer>
+		</div>
+	</body>
+</html>
+
